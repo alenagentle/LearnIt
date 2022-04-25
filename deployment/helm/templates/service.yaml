@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "learnit-backend.fullname" . }}
+  labels:
+    {{- include "learnit-backend.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - name: http
+      port: {{ .Values.service.port }}
+      {{- if eq .Values.service.type "ClusterIP"}}
+      targetPort: {{ .Values.deployment.internal_port }}
+      {{- end }}
+      {{- if eq .Values.service.type "NodePort"}}
+      nodePort: {{ .Values.service.nodePort }}
+      {{- end }}
+      protocol: TCP
+  selector:
+    {{- include "learnit-backend.selectorLabels" . | nindent 4 }}

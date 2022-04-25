@@ -1,0 +1,45 @@
+stages:
+    - build jar
+    - build image
+    - deploy
+
+build:
+  stage: build jar
+  tags:
+    - maven
+  script:
+    - mvn clean install
+  artifacts:
+    paths:
+      - target/*.jar
+    expire_in: 1 week
+  image: maven:3.8.4-openjdk-17
+
+docker:
+  stage: build image
+  services:
+    - docker:19.03.12-dind
+  tags:
+    - docker-builder
+  before_script:
+    - update-ca-certificates
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker build --tag $CI_REGISTRY/learnit/backend/$CI_COMMIT_BRANCH:$CI_COMMIT_SHORT_SHA --tag $CI_REGISTRY/learnit/backend/$CI_COMMIT_BRANCH:latest .
+    - docker push $CI_REGISTRY/learnit/backend/$CI_COMMIT_BRANCH:$CI_COMMIT_SHORT_SHA
+    - docker push $CI_REGISTRY/learnit/backend/$CI_COMMIT_BRANCH:latest
+  only:
+    - master
+    - dev
+
+deploy:
+  stage: deploy
+  image:
+    name: alpine/helm:3.7.2
+    entrypoint: [""]
+  tags:
+    - helm
+  script:
+    - helm upgrade -i learnit-backend deployment/helm --namespace develop --set image.tag=$CI_COMMIT_SHORT_SHA,image.repository=harbor.lan/learnit/backend/$CI_COMMIT_BRANCH
+  only:
+    - dev
