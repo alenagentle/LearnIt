@@ -2,6 +2,7 @@ package ru.irlix.learnit.security.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -9,9 +10,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ResponseBodyCreator {
+@Component
+public class ErrorResponseBodyFactory {
 
-    public static void createBody(HttpServletRequest request,
+    public void createBody(HttpServletRequest request,
                                   HttpServletResponse response,
                                   String message,
                                   int status,

@@ -46,8 +46,6 @@ public abstract class AnswerMapper {
 
     public abstract List<AnswerResponse> mapToResponseList(List<Answer> answers);
 
-    public abstract List<FinalAnswerResponse> mapToFinalResponseList(List<Answer> answers);
-
     @AfterMapping
     protected void map(@MappingTarget Answer answer, AnswerRequest request) {
         Question question = questionHelper.findQuestionById(request.getQuestionId());

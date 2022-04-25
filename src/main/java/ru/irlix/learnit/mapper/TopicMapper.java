@@ -16,7 +16,7 @@ import ru.irlix.learnit.service.helper.DirectionHelper;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = TestMapper.class)
 public abstract class TopicMapper {
 
     @Autowired

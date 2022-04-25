@@ -14,10 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.csrf.CsrfFilter;
 import ru.irlix.learnit.security.filter.AuthenticationTokenFilter;
-import ru.irlix.learnit.security.filter.CsrfTokenResponseHeaderBindingFilter;
 import ru.irlix.learnit.security.handler.AccessDeniedExceptionHandler;
 import ru.irlix.learnit.security.handler.AuthenticationEntryPointExceptionHandler;
 
@@ -49,11 +46,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public CsrfTokenResponseHeaderBindingFilter csrfTokenResponseHeaderBindingFilter() {
-        return new CsrfTokenResponseHeaderBindingFilter();
-    }
-
     @Override
     public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
         authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
@@ -63,9 +55,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and()
                 .csrf()
-                .ignoringAntMatchers(ignoredUrls)
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .and()
+                .disable()
                 .exceptionHandling()
                 .authenticationEntryPoint(unauthorizedHandler)
                 .accessDeniedHandler(accessDeniedHandler)
@@ -77,7 +67,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(ignoredUrls).permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(csrfTokenResponseHeaderBindingFilter(), CsrfFilter.class);
+                .addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }

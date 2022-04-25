@@ -48,6 +48,12 @@ env:
     value: "Learnit"
   - name: DATABASE_PASSWORD
     value: "HiMFt3wPo4"
+  - name: JWT_LIFETIME
+    value: "3600000"
+  - name: JWT_SECRET
+    value: "qwasdqwefa"
+  - name: JWT_ISSUER
+    value: "irlix"
 
 # - name: DEMO_GREETING
 #     value: "Hello from the environment"

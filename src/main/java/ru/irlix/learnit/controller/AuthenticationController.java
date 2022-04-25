@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.irlix.learnit.dto.request.LoginRequest;
-import ru.irlix.learnit.dto.request.SignupRequest;
+import ru.irlix.learnit.dto.request.SignUpRequest;
 import ru.irlix.learnit.dto.response.JwtResponse;
 import ru.irlix.learnit.service.impl.AuthenticationServiceImpl;
 
@@ -18,12 +18,12 @@ public class AuthenticationController {
     private final AuthenticationServiceImpl authenticationService;
 
     @PostMapping("/sign-in")
-    public JwtResponse authenticateUser(@RequestBody LoginRequest loginRequest) {
-        return authenticationService.getJwt(loginRequest);
+    public JwtResponse authenticateUser(@RequestBody LoginRequest request) {
+        return authenticationService.getJwt(request);
     }
 
     @PostMapping("/sign-up")
-    public JwtResponse registerUser(@RequestBody SignupRequest signupRequest) {
-        return authenticationService.registerUser(signupRequest);
+    public JwtResponse registerUser(@RequestBody SignUpRequest request) {
+        return authenticationService.registerUser(request);
     }
 }

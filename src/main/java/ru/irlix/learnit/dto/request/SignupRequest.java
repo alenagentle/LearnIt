@@ -11,7 +11,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class SignupRequest {
+public class SignUpRequest {
 
     private String username;
 
