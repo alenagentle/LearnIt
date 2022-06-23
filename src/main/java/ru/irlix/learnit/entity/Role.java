@@ -2,7 +2,7 @@ package ru.irlix.learnit.entity;
 
 import lombok.Getter;
 import lombok.Setter;
-import ru.irlix.learnit.repository.RoleName;
+import ru.irlix.learnit.entity.enums.RoleName;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,14 +31,14 @@ public class Role {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private RoleName name;
 
     @ManyToMany(mappedBy = "roles")
     private List<UserData> users;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "role_authorities",
+    @JoinTable(name = "role_authority",
             joinColumns = @JoinColumn(name = "role_id"),
             inverseJoinColumns = @JoinColumn(name = "authority_id"))
     private Set<Authority> authorities;

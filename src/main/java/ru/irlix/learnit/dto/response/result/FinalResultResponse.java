@@ -2,8 +2,9 @@ package ru.irlix.learnit.dto.response.result;
 
 import lombok.Getter;
 import lombok.Setter;
-import ru.irlix.learnit.dto.response.test.TestResponse;
 import ru.irlix.learnit.dto.response.answer.FinalAnswerResponse;
+import ru.irlix.learnit.dto.response.test.NestedTestResponse;
+import ru.irlix.learnit.dto.response.user.UserResponse;
 
 import java.time.Instant;
 import java.util.List;
@@ -16,7 +17,11 @@ public class FinalResultResponse {
 
     private Instant lastUpdate;
 
-    private TestResponse test;
+    private NestedTestResponse test;
+
+    private UserResponse user;
 
     private List<FinalAnswerResponse> answers;
+
+    private Boolean isFinished;
 }

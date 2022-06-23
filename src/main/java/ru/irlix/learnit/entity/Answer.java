@@ -33,7 +33,7 @@ public class Answer {
             inverseJoinColumns = @JoinColumn(name = "variant_id"))
     private List<Variant> variants;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "question_id")
     private Question question;
 

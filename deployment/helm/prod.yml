@@ -1,0 +1,33 @@
+env:
+  - name: DATABASE_URL
+    value: "jdbc:postgresql://192.168.88.141:5432/learnit_db"
+  - name: DATABASE_USERNAME
+    value: "Learnit"
+  - name: DATABASE_PASSWORD
+    value: "HiMFt3wPo4"
+  - name: JWT_ACCESS_LIFETIME
+    value: "86400000"
+  - name: JWT_REFRESH_LIFETIME
+    value: "2596000000"
+  - name: JWT_SECRET
+    value: "qwasdqwefa"
+  - name: JWT_ISSUER
+    value: "irlix"
+
+ingress:
+  enabled: true
+  className: ""
+  annotations:
+    # IMPORTANT! Use rewrite-target only for backend!
+      nginx.ingress.kubernetes.io/rewrite-target: /api/$2
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    # IMPORTANT! Set real application address before deploy
+    - host: learnit.lan
+      paths:
+        # For frontend: /
+        # For backend: /api(/|$)(.*)
+        - path: /api(/|$)(.*)
+          pathType: Prefix
+  tls: []

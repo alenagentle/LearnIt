@@ -5,11 +5,12 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Autowired;
+import ru.irlix.learnit.dto.request.AnswerFullRequest;
 import ru.irlix.learnit.dto.request.AnswerRequest;
 import ru.irlix.learnit.dto.response.answer.AnswerFullResponse;
 import ru.irlix.learnit.dto.response.answer.AnswerResponse;
 import ru.irlix.learnit.dto.response.answer.FinalAnswerResponse;
-import ru.irlix.learnit.dto.response.answer.NestedAnswer;
+import ru.irlix.learnit.dto.response.answer.NestedAnswerResponse;
 import ru.irlix.learnit.dto.response.variant.VariantWithAnswerResponse;
 import ru.irlix.learnit.entity.Answer;
 import ru.irlix.learnit.entity.Question;
@@ -35,11 +36,16 @@ public abstract class AnswerMapper {
     private ResultHelper resultHelper;
 
     @Mapping(target = "variants", ignore = true)
+    public abstract Answer mapToEntity(AnswerFullRequest request);
+
+    @Mapping(target = "variants", ignore = true)
     public abstract Answer mapToEntity(AnswerRequest request);
+
+    public abstract List<Answer> mapToEntityList(List<AnswerFullRequest> requests);
 
     public abstract AnswerFullResponse mapToFullResponse(Answer answer);
 
-    public abstract NestedAnswer mapToNested(Answer answer);
+    public abstract NestedAnswerResponse mapToNestedResponse(Answer answer);
 
     @Mapping(target = "variants", source = "question.variants")
     public abstract FinalAnswerResponse mapToFinalResponse(Answer answer);
@@ -47,11 +53,19 @@ public abstract class AnswerMapper {
     public abstract List<AnswerResponse> mapToResponseList(List<Answer> answers);
 
     @AfterMapping
-    protected void map(@MappingTarget Answer answer, AnswerRequest request) {
+    protected void map(@MappingTarget Answer answer, AnswerFullRequest request) {
         Question question = questionHelper.findQuestionById(request.getQuestionId());
         answer.setQuestion(question);
         Result result = resultHelper.findResultById(request.getResultId());
         answer.setResult(result);
+        List<Variant> variants = variantHelper.findVariantsByQuestionIdAndIdIn(question.getId(), request.getVariants());
+        answer.setVariants(variants);
+    }
+
+    @AfterMapping
+    protected void map(@MappingTarget Answer answer, AnswerRequest request) {
+        Question question = questionHelper.findQuestionById(request.getQuestionId());
+        answer.setQuestion(question);
         List<Variant> variants = variantHelper.findVariantsByQuestionIdAndIdIn(question.getId(), request.getVariants());
         answer.setVariants(variants);
     }
@@ -75,19 +89,19 @@ public abstract class AnswerMapper {
     }
 
     @AfterMapping
-    protected void map(@MappingTarget NestedAnswer nestedAnswer, Answer answer) {
+    protected void map(@MappingTarget NestedAnswerResponse response, Answer answer) {
         Long questionId = answer.getQuestion().getId();
-        nestedAnswer.setQuestionId(questionId);
+        response.setQuestionId(questionId);
         List<Long> variantsId = answer.getVariants().stream()
                 .map(Variant::getId)
                 .toList();
-        nestedAnswer.setSelectedVariants(variantsId);
+        response.setSelectedVariants(variantsId);
     }
 
     @AfterMapping
     protected void map(@MappingTarget FinalAnswerResponse response, Answer answer) {
         List<Variant> selectedVariants = answer.getVariants();
-        response.getVariants().forEach(e -> setSelected(e , selectedVariants));
+        response.getVariants().forEach(e -> setSelected(e, selectedVariants));
     }
 
     private void setSelected(VariantWithAnswerResponse variant, List<Variant> selectedVariants) {

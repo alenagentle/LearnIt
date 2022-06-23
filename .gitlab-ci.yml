@@ -32,7 +32,7 @@ docker:
     - master
     - dev
 
-deploy:
+deploy:dev:
   stage: deploy
   image:
     name: alpine/helm:3.7.2
@@ -40,6 +40,18 @@ deploy:
   tags:
     - helm
   script:
-    - helm upgrade -i learnit-backend deployment/helm --namespace develop --set image.tag=$CI_COMMIT_SHORT_SHA,image.repository=harbor.lan/learnit/backend/$CI_COMMIT_BRANCH
+    - helm upgrade -i learnit-backend deployment/helm --namespace develop --set image.tag=$CI_COMMIT_SHORT_SHA,image.repository=harbor.lan/learnit/backend/$CI_COMMIT_BRANCH -f deployment/helm/dev.yml
   only:
     - dev
+
+deploy:prod:
+  stage: deploy
+  image:
+    name: alpine/helm:3.7.2
+    entrypoint: [""]
+  tags:
+    - helm
+  script:
+    - helm upgrade -i learnit-backend deployment/helm --namespace prod --set image.tag=$CI_COMMIT_SHORT_SHA,image.repository=harbor.lan/learnit/backend/$CI_COMMIT_BRANCH -f deployment/helm/prod.yml
+  only:
+    - master

@@ -48,8 +48,10 @@ env:
     value: "Learnit"
   - name: DATABASE_PASSWORD
     value: "HiMFt3wPo4"
-  - name: JWT_LIFETIME
-    value: "3600000"
+  - name: JWT_ACCESS_LIFETIME
+    value: "86400000"
+  - name: JWT_REFRESH_LIFETIME
+    value: "2596000000"
   - name: JWT_SECRET
     value: "qwasdqwefa"
   - name: JWT_ISSUER

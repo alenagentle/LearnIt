@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <include file="create-wiki-table.xml" relativeToChangelogFile="true"/>
+    <include file="create-user-data-table.xml" relativeToChangelogFile="true"/>
+    <include file="create-topic-table.xml" relativeToChangelogFile="true"/>
+    <include file="create-test-table.xml" relativeToChangelogFile="true"/>
+    <include file="create-direction-table.xml" relativeToChangelogFile="true"/>
+    <include file="create-question-table.xml" relativeToChangelogFile="true"/>
+    <include file="create-direction-topic-table.xml" relativeToChangelogFile="true"/>
+    <include file="create-result-table.xml" relativeToChangelogFile="true"/>
+    <include file="create-variant-table.xml" relativeToChangelogFile="true"/>
+    <include file="create-answer-table.xml" relativeToChangelogFile="true"/>
+    <include file="create-variant-answer-table.xml" relativeToChangelogFile="true"/>
+    <include file="create-role-table.xml" relativeToChangelogFile="true"/>
+    <include file="create-user-role-table.xml" relativeToChangelogFile="true"/>
+    <include file="create-authority-table.xml" relativeToChangelogFile="true"/>
+    <include file="create-role-authority-table.xml" relativeToChangelogFile="true"/>
+    <include file="create-token-table.xml" relativeToChangelogFile="true"/>
+    <include file="add-data-to-role.xml" relativeToChangelogFile="true"/>
+    <include file="add-mail-field-to-user.xml" relativeToChangelogFile="true"/>
+    <include file="alter-username-length.xml" relativeToChangelogFile="true"/>
+    <include file="add-image-table-and-relations.xml" relativeToChangelogFile="true"/>
+    <include file="add-constraints-to-tables.xml" relativeToChangelogFile="true"/>
+    <include file="alter-result-finish.xml" relativeToChangelogFile="true"/>
+    <include file="alter-data-in-role.xml" relativeToChangelogFile="true"/>
+    <include file="create-link-table.xml" relativeToChangelogFile="true"/>
+    <include file="alter-user-data-add-reg-date.xml" relativeToChangelogFile="true"/>
+</databaseChangeLog>

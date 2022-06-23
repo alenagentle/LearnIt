@@ -10,11 +10,13 @@ import ru.irlix.learnit.dto.request.DirectionRequest;
 import ru.irlix.learnit.dto.response.direction.DirectionFullResponse;
 import ru.irlix.learnit.dto.response.direction.DirectionResponse;
 import ru.irlix.learnit.entity.Direction;
-import ru.irlix.learnit.exception.NameAlreadyTakenException;
+import ru.irlix.learnit.entity.Image;
+import ru.irlix.learnit.exception.FieldAlreadyTakenException;
 import ru.irlix.learnit.mapper.DirectionMapper;
 import ru.irlix.learnit.repository.DirectionRepository;
 import ru.irlix.learnit.service.api.DirectionService;
 import ru.irlix.learnit.service.helper.DirectionHelper;
+import ru.irlix.learnit.service.helper.FileHelper;
 
 import java.util.Objects;
 
@@ -26,6 +28,7 @@ public class DirectionServiceImpl implements DirectionService {
     private final DirectionRepository directionRepository;
     private final DirectionHelper directionHelper;
     private final DirectionMapper directionMapper;
+    private final FileHelper fileHelper;
 
     @Override
     @Transactional
@@ -50,10 +53,11 @@ public class DirectionServiceImpl implements DirectionService {
 
     @Override
     @Transactional
-    public void deleteDirection(Long id) {
+    public void deleteDirectionById(Long id) {
         Direction direction = directionHelper.findDirectionById(id);
         directionRepository.delete(direction);
         log.info("Direction with id {} deleted", id);
+        deleteImageFromS3(direction);
     }
 
     @Override
@@ -75,15 +79,25 @@ public class DirectionServiceImpl implements DirectionService {
             direction.setName(request.getName());
         }
         if (request.getImage() != null) {
-            direction.setImage(request.getImage());
+            deleteImageFromS3(direction);
+            Image image = fileHelper.saveImageOnS3(request.getImage());
+            direction.setImage(image);
         }
+    }
+
+    private void deleteImageFromS3(Direction direction) {
+        if (direction.getImage() == null) {
+            return;
+        }
+        String key = direction.getImage().getKey();
+        fileHelper.deleteImageFromS3(key);
     }
 
     private void validateName(DirectionRequest request) {
         String name = request.getName();
         boolean existsByName = directionRepository.existsByName(name);
         if (existsByName) {
-            throw new NameAlreadyTakenException(name);
+            throw new FieldAlreadyTakenException(name, "Name");
         }
     }
 

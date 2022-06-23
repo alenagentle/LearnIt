@@ -14,4 +14,6 @@ public class DirectionResponse {
     private String image;
 
     private int topicsCount;
+
+    private long progress;
 }

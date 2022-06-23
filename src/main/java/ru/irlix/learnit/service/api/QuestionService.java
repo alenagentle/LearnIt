@@ -6,6 +6,7 @@ import ru.irlix.learnit.dto.response.question.QuestionResponse;
 import java.util.List;
 
 public interface QuestionService {
+
     QuestionResponse createQuestion(QuestionRequest questionRequest);
 
     QuestionResponse findQuestionById(Long id);
@@ -14,5 +15,5 @@ public interface QuestionService {
 
     QuestionResponse updateQuestion(Long id, QuestionRequest questionRequest);
 
-    void deleteQuestion(Long id);
+    void deleteQuestionById(Long id);
 }

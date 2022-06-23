@@ -30,4 +30,8 @@ public class VariantHelper {
     public List<Variant> findRightVariantsByQuestionId(Long questionId) {
         return variantRepository.findVariantsByIsRightTrueAndQuestionId(questionId);
     }
+
+    public void saveVariants(List<Variant> variants) {
+        variantRepository.saveAll(variants);
+    }
 }

@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class NestedQuestion {
+public class NestedQuestionResponse {
 
     private Long id;
 

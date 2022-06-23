@@ -19,4 +19,11 @@ public class QuestionHelper {
         return questionRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(String.format("Question with id %d not found", id)));
     }
+
+    public void checkQuestionExistingById(Long id) {
+        boolean questionExists = questionRepository.existsById(id);
+        if (!questionExists) {
+            throw new NotFoundException(String.format("Cant find question with id %d", id));
+        }
+    }
 }

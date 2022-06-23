@@ -12,7 +12,7 @@ public interface DirectionService {
 
     DirectionFullResponse updateDirection(Long id, DirectionRequest request);
 
-    void deleteDirection(Long id);
+    void deleteDirectionById(Long id);
 
     Page<DirectionResponse> findAllDirections(Pageable pageable);
 

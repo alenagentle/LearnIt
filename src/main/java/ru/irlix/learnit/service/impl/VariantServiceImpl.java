@@ -44,8 +44,9 @@ public class VariantServiceImpl implements VariantService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<VariantResponse> findVariantsByQuestionId(Long id) {
-        List<Variant> variants = variantRepository.findVariantsByQuestionId(id);
+    public List<VariantResponse> findVariantsByQuestionId(Long questionId) {
+        questionHelper.checkQuestionExistingById(questionId);
+        List<Variant> variants = variantRepository.findVariantsByQuestionId(questionId);
         return variantMapper.mapToResponseList(variants);
     }
 

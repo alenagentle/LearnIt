@@ -12,7 +12,7 @@ public interface TopicService {
 
     TopicFullResponse updateTopic(Long id, TopicRequest topicRequest);
 
-    void deleteTopic(Long id);
+    void deleteTopicById(Long id);
 
     Page<TopicResponse> findTopicsByDirectionId(Long directionId, Pageable pageable);
 

@@ -9,13 +9,19 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.irlix.learnit.dto.request.TopicRequest;
 import ru.irlix.learnit.dto.response.topic.TopicFullResponse;
 import ru.irlix.learnit.dto.response.topic.TopicResponse;
+import ru.irlix.learnit.entity.Direction;
+import ru.irlix.learnit.entity.Image;
 import ru.irlix.learnit.entity.Topic;
-import ru.irlix.learnit.exception.NameAlreadyTakenException;
+import ru.irlix.learnit.exception.FieldAlreadyTakenException;
+import ru.irlix.learnit.exception.NoRelatedDirectionException;
 import ru.irlix.learnit.mapper.TopicMapper;
 import ru.irlix.learnit.repository.TopicRepository;
 import ru.irlix.learnit.service.api.TopicService;
+import ru.irlix.learnit.service.helper.DirectionHelper;
+import ru.irlix.learnit.service.helper.FileHelper;
 import ru.irlix.learnit.service.helper.TopicHelper;
 
+import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -26,6 +32,8 @@ public class TopicServiceImpl implements TopicService {
     private final TopicRepository topicRepository;
     private final TopicMapper topicMapper;
     private final TopicHelper topicHelper;
+    private final DirectionHelper directionHelper;
+    private final FileHelper fileHelper;
 
     @Override
     @Transactional
@@ -50,15 +58,17 @@ public class TopicServiceImpl implements TopicService {
 
     @Override
     @Transactional
-    public void deleteTopic(Long id) {
+    public void deleteTopicById(Long id) {
         Topic topic = topicHelper.findTopicById(id);
         topicRepository.delete(topic);
         log.info("Topic with id {} deleted", id);
+        deleteImageFromS3(topic);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<TopicResponse> findTopicsByDirectionId(Long directionId, Pageable pageable) {
+        directionHelper.checkDirectionExistingById(directionId);
         Page<Topic> topics = topicRepository.findTopicsByDirectionsId(directionId, pageable);
         return topicMapper.mapToResponsePage(topics);
     }
@@ -71,26 +81,42 @@ public class TopicServiceImpl implements TopicService {
     }
 
     private void checkAndUpdateFields(TopicRequest request, Topic topicToUpdate) {
-        Topic topic = topicMapper.mapToEntity(request);
-        if (topic.getName() != null) {
-            topicToUpdate.setName(topic.getName());
+        if (request.getName() != null) {
+            topicToUpdate.setName(request.getName());
         }
-        if (topic.getDescription() != null) {
-            topicToUpdate.setDescription(topic.getDescription());
+        if (request.getDescription() != null) {
+            topicToUpdate.setDescription(request.getDescription());
         }
-        if (topic.getImage() != null) {
-            topicToUpdate.setImage(topic.getImage());
+        if (request.getImage() != null) {
+            deleteImageFromS3(topicToUpdate);
+            Image image = fileHelper.saveImageOnS3(request.getImage());
+            topicToUpdate.setImage(image);
         }
-        if (topic.getDirections() != null) {
-            topicToUpdate.setDirections(topic.getDirections());
+        if (request.getDirectionIdSet() != null && !request.getDirectionIdSet().isEmpty()) {
+            List<Direction> directions = directionHelper.findDirectionsByIds(request.getDirectionIdSet());
+            if (directions.isEmpty()) {
+                throw new NoRelatedDirectionException();
+            }
+            topicToUpdate.setDirections(directions);
         }
+        if (request.getWikiText() != null) {
+            topicToUpdate.getWiki().setText(request.getWikiText());
+        }
+    }
+
+    private void deleteImageFromS3(Topic topic) {
+        if (topic.getImage() == null) {
+            return;
+        }
+        String key = topic.getImage().getKey();
+        fileHelper.deleteImageFromS3(key);
     }
 
     private void validateName(TopicRequest request) {
         String name = request.getName();
         boolean existsByName = topicRepository.existsByName(name);
         if (existsByName) {
-            throw new NameAlreadyTakenException(name);
+            throw new FieldAlreadyTakenException(name, "Name");
         }
     }
 

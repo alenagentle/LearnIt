@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +35,9 @@ public class Topic {
     @Column(name = "description", length = 1024)
     private String description;
 
-    @Column(name = "image", length = 512)
-    private String image;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "image_id")
+    private Image image;
 
     @ManyToMany
     @JoinTable(name = "direction_topic",
@@ -44,5 +46,9 @@ public class Topic {
     private List<Direction> directions = new ArrayList<>();
 
     @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL)
-    private List<Test> tests;
+    private List<Test> tests = new ArrayList<>();
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "wiki_id")
+    private Wiki wiki;
 }

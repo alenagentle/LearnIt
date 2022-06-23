@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.irlix.learnit.dto.response.question.QuestionResponse;
+import ru.irlix.learnit.dto.response.result.ResultResponse;
+import ru.irlix.learnit.dto.response.user.UserResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,5 +25,9 @@ public class TestFullResponse {
 
     private Long topicId;
 
+    private UserResponse author;
+
     private List<QuestionResponse> questions = new ArrayList<>();
+
+    private List<ResultResponse> results = new ArrayList<>();
 }

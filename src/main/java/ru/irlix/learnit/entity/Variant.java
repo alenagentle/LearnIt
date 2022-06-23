@@ -28,13 +28,13 @@ public class Variant {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "text")
+    @Column(name = "text", nullable = false)
     private String text;
 
-    @Column(name = "is_right")
+    @Column(name = "is_right", nullable = false)
     private Boolean isRight;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "question_id")
     private Question question;
 

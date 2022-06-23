@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.5.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="add-not-null-constraint-to-user-id-in-result" author="kalachikov">
+        <addNotNullConstraint columnDataType="BIGINT" columnName="user_id" tableName="result" validate="true"/>
+    </changeSet>
+    <changeSet id="add-not-null-constraint-to-user-id-in-token" author="kalachikov">
+        <addNotNullConstraint columnDataType="BIGINT" columnName="user_data_id" tableName="token" validate="true"/>
+    </changeSet>
+    <changeSet id="add-not-null-constraint-to-topic-id-in-test" author="kalachikov">
+        <addNotNullConstraint columnDataType="BIGINT" columnName="topic_id" tableName="test" validate="true"/>
+    </changeSet>
+    <changeSet id="add-not-null-constraint-to-text-id-in-wiki" author="kalachikov">
+        <addNotNullConstraint columnDataType="VARCHAR(2048)" columnName="text" tableName="wiki" validate="true"/>
+    </changeSet>
+    <changeSet id="add-not-null-constraint-to-test-id-in-result" author="kalachikov">
+        <addNotNullConstraint columnDataType="BIGINT" columnName="test_id" tableName="result" validate="true"/>
+    </changeSet>
+    <changeSet id="add-not-null-constraint-to-test-id-in-question" author="kalachikov">
+        <addNotNullConstraint columnDataType="BIGINT" columnName="test_id" tableName="question" validate="true"/>
+    </changeSet>
+    <changeSet id="add-not-null-constraint-to-refresh-token-date-in-token" author="kalachikov">
+        <addNotNullConstraint columnDataType="DATETIME" columnName="refresh_token_expires" tableName="token"
+                              validate="true"/>
+    </changeSet>
+    <changeSet id="add-not-null-constraint-to-refresh-token-in-token" author="kalachikov">
+        <addNotNullConstraint columnDataType="VARCHAR(512)" columnName="refresh_token" tableName="token"
+                              validate="true"/>
+    </changeSet>
+    <changeSet id="add-not-null-constraint-to-question-id-in-variant" author="kalachikov">
+        <addNotNullConstraint columnDataType="BIGINT" columnName="question_id" tableName="variant" validate="true"/>
+    </changeSet>
+    <changeSet id="add-not-null-constraint-to-question-id-in-answer" author="kalachikov">
+        <addNotNullConstraint columnDataType="BIGINT" columnName="question_id" tableName="answer" validate="true"/>
+    </changeSet>
+    <changeSet id="add-not-null-constraint-to-name-in-topic" author="kalachikov">
+        <addNotNullConstraint columnDataType="VARCHAR(255)" columnName="name" tableName="topic" validate="true"/>
+    </changeSet>
+    <changeSet id="add-not-null-constraint-to-name-in-direction" author="kalachikov">
+        <addNotNullConstraint columnDataType="VARCHAR(255)" columnName="name" tableName="direction" validate="true"/>
+    </changeSet>
+    <changeSet id="add-not-null-constraint-to-access-token-date-in-token" author="kalachikov">
+        <addNotNullConstraint columnDataType="DATETIME" columnName="access_token_expires" tableName="token"
+                              validate="true"/>
+    </changeSet>
+    <changeSet id="add-not-null-constraint-to-access-token-in-token" author="kalachikov">
+        <addNotNullConstraint columnDataType="VARCHAR(512)" columnName="access_token" tableName="token"
+                              validate="true"/>
+    </changeSet>
+    <changeSet id="add-unique-constraint-to-user-id-in-token" author="kalachikov">
+        <addUniqueConstraint columnNames="user_data_id" constraintName="uc_token_user_data" tableName="token"/>
+    </changeSet>
+
+</databaseChangeLog>

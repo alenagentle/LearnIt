@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.util.List;
 
@@ -27,16 +28,17 @@ public class Question {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "text", length = 512)
+    @Column(name = "text", nullable = false, length = 512)
     private String text;
 
     @Column(name = "description", length = 512)
     private String description;
 
-    @Column(name = "image", length = 512)
-    private String image;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "image_id")
+    private Image image;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "test_id")
     private Test test;
 
@@ -45,5 +47,4 @@ public class Question {
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     private List<Answer> answers;
-
 }

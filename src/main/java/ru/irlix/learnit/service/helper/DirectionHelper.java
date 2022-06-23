@@ -23,6 +23,13 @@ public class DirectionHelper {
                 .orElseThrow(() -> new NotFoundException(String.format("Cant find direction with id %d", id)));
     }
 
+    public void checkDirectionExistingById(Long id) {
+        boolean directionExists = directionRepository.existsById(id);
+        if (!directionExists) {
+            throw new NotFoundException(String.format("Cant find direction with id %d", id));
+        }
+    }
+
     public List<Direction> findDirectionsByIds(Collection<Long> idCollection) {
         return directionRepository.findDirectionByIdIn(idCollection);
     }

@@ -19,5 +19,13 @@ public class TestResponse {
 
     private Long topicId;
 
+    private Long authorId;
+
     private int questionsCount;
+
+    private int resultCount;
+
+    private int questionsAnsweredCount;
+
+    private int progress;
 }

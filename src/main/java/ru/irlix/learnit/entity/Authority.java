@@ -2,7 +2,7 @@ package ru.irlix.learnit.entity;
 
 import lombok.Getter;
 import lombok.Setter;
-import ru.irlix.learnit.repository.AuthorityName;
+import ru.irlix.learnit.entity.enums.AuthorityName;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,7 +27,7 @@ public class Authority {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "name")
+    @Column(name = "name", nullable = false, unique = true)
     private AuthorityName name;
 
     @ManyToMany(mappedBy = "authorities")

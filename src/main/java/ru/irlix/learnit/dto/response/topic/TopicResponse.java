@@ -18,4 +18,8 @@ public class TopicResponse {
     private Long directionId;
 
     private int testCount;
+
+    private long finishedTestsCount;
+
+    private long progress;
 }

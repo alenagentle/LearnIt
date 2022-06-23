@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.irlix.learnit.security.util.JwtUtils;
+import ru.irlix.learnit.service.api.AuthenticationService;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -23,17 +24,18 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
     private final UserDetailsService userService;
+    private final AuthenticationService authenticationService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String jwt = parseJwt(request);
-        if (jwt == null || !jwtUtils.validateJwtToken(jwt)) {
+        if (jwt == null || !jwtUtils.validateJwt(jwt) || !authenticationService.validateAccessToken(jwt)) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String username = jwtUtils.getUserNameFromJwtToken(jwt);
+        String username = jwtUtils.getUsernameFromJwt(jwt);
         UserDetails userDetails = userService.loadUserByUsername(username);
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails,
                 null,

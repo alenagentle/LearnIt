@@ -1,4 +1,4 @@
-package ru.irlix.learnit.repository;
+package ru.irlix.learnit.entity.enums;
 
 public enum AuthorityName {
     ADMIN_AUTHORITY

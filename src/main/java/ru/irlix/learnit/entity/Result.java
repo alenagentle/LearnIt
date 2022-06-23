@@ -31,17 +31,20 @@ public class Result {
     private Long id;
 
     @UpdateTimestamp
-    @Column(name = "last_update")
+    @Column(name = "last_update", nullable = false)
     private Instant lastUpdate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @Column(name = "is_finished", nullable = false)
+    private Boolean isFinished;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "test_id")
     private Test test;
 
     @OneToMany(mappedBy = "result", cascade = CascadeType.ALL)
     private List<Answer> answers = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id")
     private UserData user;
 }

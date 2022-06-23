@@ -22,17 +22,25 @@ public class UserHelper {
         return userRepository.existsByUsername(username);
     }
 
-    public void saveUser(UserData user) {
-        userRepository.save(user);
+    public Boolean existsUserByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+    public UserData saveUser(UserData user) {
+        return userRepository.save(user);
     }
 
     public UserData findUserByUsername(String username) {
-        return userRepository.findByUsername(username)
+        return userRepository.findUserDataByUsername(username)
                 .orElseThrow(() -> new NotFoundException(String.format("User with username '%s' not found", username)));
     }
 
     public UserData getCurrentUserData() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String anonymousUser = "anonymousUser";
+        if (authentication.getPrincipal() == anonymousUser) {
+            return null;
+        }
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         String username = principal.getUsername();
         return findUserByUsername(username);

@@ -8,6 +8,8 @@ import ru.irlix.learnit.entity.Test;
 import ru.irlix.learnit.exception.NotFoundException;
 import ru.irlix.learnit.repository.TestRepository;
 
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 @Transactional(propagation = Propagation.MANDATORY)
@@ -17,6 +19,17 @@ public class TestHelper {
 
     public Test findTestById(Long id) {
         return testRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Test with id " + id + " not found"));
+                .orElseThrow(() -> new NotFoundException(String.format("Test with id %d not found", id)));
+    }
+
+    public void checkTestExistingById(Long id) {
+        boolean testExists = testRepository.existsById(id);
+        if (!testExists) {
+            throw new NotFoundException(String.format("Cant find test with id %d", id));
+        }
+    }
+
+    public List<Test> findResultsByUsername(Long userId) {
+        return testRepository.findTestsWithResultsByUserId(userId);
     }
 }

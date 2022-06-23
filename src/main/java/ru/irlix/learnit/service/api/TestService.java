@@ -1,19 +1,20 @@
 package ru.irlix.learnit.service.api;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import ru.irlix.learnit.dto.request.TestRequest;
+import ru.irlix.learnit.dto.response.result.UsersResultResponse;
 import ru.irlix.learnit.dto.response.test.TestFullResponse;
 import ru.irlix.learnit.dto.response.test.TestResponse;
-
-import java.util.List;
 
 public interface TestService {
     TestFullResponse createTest(TestRequest testRequest);
 
-    List<TestResponse> findAllTests();
+    Page<TestResponse> findTestsByTopicId(Long topicId, Pageable pageable);
 
     TestFullResponse findTestById(Long id);
 
     TestFullResponse updateTest(Long id, TestRequest testRequest);
 
-    void deleteTest(Long id);
+    void deleteTestById(Long id);
 }

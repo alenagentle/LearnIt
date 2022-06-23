@@ -19,4 +19,11 @@ public class TopicHelper {
         return topicRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(String.format("Cant find topic with id %d", id)));
     }
+
+    public void checkTopicExistingById(Long id) {
+        boolean topicExists = topicRepository.existsById(id);
+        if (!topicExists) {
+            throw new NotFoundException(String.format("Cant find topic with id %d", id));
+        }
+    }
 }

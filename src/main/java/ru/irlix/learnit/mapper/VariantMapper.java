@@ -4,7 +4,7 @@ import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Autowired;
-import ru.irlix.learnit.dto.request.NestedVariant;
+import ru.irlix.learnit.dto.request.NestedVariantRequest;
 import ru.irlix.learnit.dto.request.VariantRequest;
 import ru.irlix.learnit.dto.response.variant.VariantResponse;
 import ru.irlix.learnit.entity.Question;
@@ -21,7 +21,9 @@ public abstract class VariantMapper {
 
     public abstract Variant mapToVariant(VariantRequest variantRequest);
 
-    public abstract Variant mapToVariant(NestedVariant variant);
+    public abstract Variant mapToVariant(NestedVariantRequest variant);
+
+    public abstract List<Variant> mapToVariants(List<NestedVariantRequest> variantRequests);
 
     public abstract VariantResponse mapToResponse(Variant variant);
 

@@ -7,7 +7,7 @@ import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.irlix.learnit.dto.request.QuestionRequest;
 import ru.irlix.learnit.dto.response.answer.FinalAnswerResponse;
-import ru.irlix.learnit.dto.response.question.NestedQuestion;
+import ru.irlix.learnit.dto.response.question.NestedQuestionResponse;
 import ru.irlix.learnit.dto.response.question.QuestionResponse;
 import ru.irlix.learnit.entity.Question;
 import ru.irlix.learnit.entity.Test;
@@ -17,7 +17,7 @@ import ru.irlix.learnit.service.helper.TestHelper;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = VariantMapper.class)
+@Mapper(componentModel = "spring", uses = {VariantMapper.class, ImageMapper.class})
 public abstract class QuestionMapper {
 
     @Autowired
@@ -27,7 +27,7 @@ public abstract class QuestionMapper {
 
     public abstract QuestionResponse mapToResponse(Question question);
 
-    public abstract NestedQuestion mapToNested(Question question);
+    public abstract NestedQuestionResponse mapToNestedResponse(Question question);
 
     public abstract List<QuestionResponse> mapToResponseList(List<Question> questionList);
 
@@ -40,7 +40,9 @@ public abstract class QuestionMapper {
         validateRightVariantExisting(question);
         Test test = testHelper.findTestById(questionRequest.getTestId());
         question.setTest(test);
-        question.getVariants().forEach(v -> v.setQuestion(question));
+        if (question.getVariants() != null) {
+            question.getVariants().forEach(v -> v.setQuestion(question));
+        }
     }
 
     @AfterMapping
@@ -49,9 +51,11 @@ public abstract class QuestionMapper {
     }
 
     private void validateRightVariantExisting(Question question) {
-        boolean haveAnyRightVariant = question.getVariants().stream().anyMatch(this::isRight);
-        if (!haveAnyRightVariant) {
-            throw new NoRightVariantInQuestionException();
+        if (question.getVariants() != null) {
+            boolean haveAnyRightVariant = question.getVariants().stream().anyMatch(this::isRight);
+            if (!haveAnyRightVariant) {
+                throw new NoRightVariantInQuestionException();
+            }
         }
     }
 
