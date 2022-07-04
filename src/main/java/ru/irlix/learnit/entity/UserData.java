@@ -51,6 +51,9 @@ public class UserData {
     @Column(name = "registration_date")
     private Instant registrationDate;
 
+    @Column(name = "restore_code")
+    private String restoreCode;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),

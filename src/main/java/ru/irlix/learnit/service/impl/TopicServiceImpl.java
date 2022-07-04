@@ -11,7 +11,9 @@ import ru.irlix.learnit.dto.response.topic.TopicFullResponse;
 import ru.irlix.learnit.dto.response.topic.TopicResponse;
 import ru.irlix.learnit.entity.Direction;
 import ru.irlix.learnit.entity.Image;
+import ru.irlix.learnit.entity.Result;
 import ru.irlix.learnit.entity.Topic;
+import ru.irlix.learnit.entity.UserData;
 import ru.irlix.learnit.exception.FieldAlreadyTakenException;
 import ru.irlix.learnit.exception.NoRelatedDirectionException;
 import ru.irlix.learnit.mapper.TopicMapper;
@@ -19,10 +21,13 @@ import ru.irlix.learnit.repository.TopicRepository;
 import ru.irlix.learnit.service.api.TopicService;
 import ru.irlix.learnit.service.helper.DirectionHelper;
 import ru.irlix.learnit.service.helper.FileHelper;
+import ru.irlix.learnit.service.helper.ResultHelper;
 import ru.irlix.learnit.service.helper.TopicHelper;
+import ru.irlix.learnit.service.helper.UserHelper;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -34,6 +39,8 @@ public class TopicServiceImpl implements TopicService {
     private final TopicHelper topicHelper;
     private final DirectionHelper directionHelper;
     private final FileHelper fileHelper;
+    private final UserHelper userHelper;
+    private final ResultHelper resultHelper;
 
     @Override
     @Transactional
@@ -78,6 +85,20 @@ public class TopicServiceImpl implements TopicService {
     public TopicFullResponse findTopicById(Long id) {
         Topic topic = topicHelper.findTopicById(id);
         return topicMapper.mapToFullResponse(topic);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<TopicResponse> findRecentTopics() {
+        UserData currentUser = userHelper.getCurrentUserData();
+        List<Result> recentResults = resultHelper.findRecentResult(currentUser);
+        List<Topic> recentTopics = recentResults
+                .stream()
+                .map(result -> result.getTest().getTopic())
+                .distinct()
+                .limit(3)
+                .collect(Collectors.toList());
+        return topicMapper.mapToResponseList(recentTopics);
     }
 
     private void checkAndUpdateFields(TopicRequest request, Topic topicToUpdate) {

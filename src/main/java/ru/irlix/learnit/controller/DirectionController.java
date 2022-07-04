@@ -23,6 +23,7 @@ import ru.irlix.learnit.service.api.DirectionService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/direction")
@@ -64,5 +65,10 @@ public class DirectionController {
     @GetMapping("/{id}")
     public DirectionFullResponse findDirectionById(@PathVariable @Positive(message = "{id.positive}") Long id) {
         return directionService.findDirectionById(id);
+    }
+
+    @GetMapping("/recent")
+    public List<DirectionResponse> findRecentDirections() {
+        return directionService.findRecentDirections();
     }
 }

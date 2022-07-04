@@ -23,6 +23,7 @@ import ru.irlix.learnit.service.api.TopicService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/topic")
@@ -65,5 +66,10 @@ public class TopicController {
     @GetMapping("/{id}")
     public TopicFullResponse findTopicById(@PathVariable @Positive(message = "{id.positive}") Long id) {
         return topicService.findTopicById(id);
+    }
+
+    @GetMapping("/recent")
+    public List<TopicResponse> findRecentTopics() {
+        return topicService.findRecentTopics();
     }
 }

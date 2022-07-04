@@ -30,4 +30,5 @@
     <include file="alter-data-in-role.xml" relativeToChangelogFile="true"/>
     <include file="create-link-table.xml" relativeToChangelogFile="true"/>
     <include file="alter-user-data-add-reg-date.xml" relativeToChangelogFile="true"/>
+    <include file="add-restore-code-column.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

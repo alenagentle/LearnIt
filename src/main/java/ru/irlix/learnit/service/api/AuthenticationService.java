@@ -19,4 +19,6 @@ public interface AuthenticationService {
     void invalidateTokens();
 
     UserFullResponse getCurrentUser();
+
+    JwtResponse getToken(String token);
 }

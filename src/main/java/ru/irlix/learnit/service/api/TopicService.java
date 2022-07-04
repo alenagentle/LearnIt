@@ -6,6 +6,8 @@ import ru.irlix.learnit.dto.request.TopicRequest;
 import ru.irlix.learnit.dto.response.topic.TopicFullResponse;
 import ru.irlix.learnit.dto.response.topic.TopicResponse;
 
+import java.util.List;
+
 public interface TopicService {
 
     TopicFullResponse createTopic(TopicRequest topicRequest);
@@ -17,4 +19,6 @@ public interface TopicService {
     Page<TopicResponse> findTopicsByDirectionId(Long directionId, Pageable pageable);
 
     TopicFullResponse findTopicById(Long id);
+
+    List<TopicResponse> findRecentTopics();
 }

@@ -33,6 +33,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final String[] ignoredUrls = new String[]{
             "/api/authentication/sign-up",
             "/api/authentication/sign-in",
+            "/api/restore/**",
             "/api/authentication/refresh",
             "/api/swagger-ui/**",
             "/api/swagger-ui.html",

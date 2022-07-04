@@ -6,6 +6,8 @@ import ru.irlix.learnit.dto.request.DirectionRequest;
 import ru.irlix.learnit.dto.response.direction.DirectionFullResponse;
 import ru.irlix.learnit.dto.response.direction.DirectionResponse;
 
+import java.util.List;
+
 public interface DirectionService {
 
     DirectionFullResponse createDirection(DirectionRequest request);
@@ -17,4 +19,6 @@ public interface DirectionService {
     Page<DirectionResponse> findAllDirections(Pageable pageable);
 
     DirectionFullResponse findDirectionById(Long id);
+
+    List<DirectionResponse> findRecentDirections();
 }

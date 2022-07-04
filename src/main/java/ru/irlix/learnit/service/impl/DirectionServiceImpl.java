@@ -11,14 +11,21 @@ import ru.irlix.learnit.dto.response.direction.DirectionFullResponse;
 import ru.irlix.learnit.dto.response.direction.DirectionResponse;
 import ru.irlix.learnit.entity.Direction;
 import ru.irlix.learnit.entity.Image;
+import ru.irlix.learnit.entity.Result;
+import ru.irlix.learnit.entity.UserData;
 import ru.irlix.learnit.exception.FieldAlreadyTakenException;
 import ru.irlix.learnit.mapper.DirectionMapper;
 import ru.irlix.learnit.repository.DirectionRepository;
 import ru.irlix.learnit.service.api.DirectionService;
 import ru.irlix.learnit.service.helper.DirectionHelper;
 import ru.irlix.learnit.service.helper.FileHelper;
+import ru.irlix.learnit.service.helper.ResultHelper;
+import ru.irlix.learnit.service.helper.UserHelper;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -28,6 +35,8 @@ public class DirectionServiceImpl implements DirectionService {
     private final DirectionRepository directionRepository;
     private final DirectionHelper directionHelper;
     private final DirectionMapper directionMapper;
+    private final ResultHelper resultHelper;
+    private final UserHelper userHelper;
     private final FileHelper fileHelper;
 
     @Override
@@ -72,6 +81,22 @@ public class DirectionServiceImpl implements DirectionService {
     public DirectionFullResponse findDirectionById(Long id) {
         Direction direction = directionHelper.findDirectionById(id);
         return directionMapper.mapToFullResponse(direction);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<DirectionResponse> findRecentDirections() {
+        UserData currentUser = userHelper.getCurrentUserData();
+        List<Result> recentResults = resultHelper.findRecentResult(currentUser);
+        List<Direction> recentDirection = recentResults
+                .stream()
+                .map(result -> result.getTest().getTopic().getDirections()
+                        .stream()
+                        .max(Comparator.comparingLong(Direction::getId)).orElse(null))
+                .distinct()
+                .limit(3)
+                .collect(Collectors.toList());
+        return directionMapper.mapToResponseList(recentDirection);
     }
 
     private void checkAndUpdateFields(DirectionRequest request, Direction direction) {
