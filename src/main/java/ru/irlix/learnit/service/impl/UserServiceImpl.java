@@ -3,12 +3,15 @@ package ru.irlix.learnit.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.irlix.learnit.dto.request.ChangePasswordRequest;
 import ru.irlix.learnit.dto.response.user.UserFullResponse;
 import ru.irlix.learnit.entity.Role;
 import ru.irlix.learnit.entity.UserData;
 import ru.irlix.learnit.entity.enums.RoleName;
+import ru.irlix.learnit.exception.InvalidRecoveryCode;
 import ru.irlix.learnit.mapper.UserMapper;
 import ru.irlix.learnit.repository.UserRepository;
 import ru.irlix.learnit.security.util.SecurityUtil;
@@ -27,6 +30,7 @@ public class UserServiceImpl implements UserService {
     private final UserHelper userHelper;
     private final UserMapper userMapper;
     private final RoleHelper roleHelper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
@@ -61,5 +65,18 @@ public class UserServiceImpl implements UserService {
     public List<UserFullResponse> findAllUsers() {
         List<UserData> userDataList = userRepository.findAll();
         return userMapper.mapToFullResponses(userDataList);
+    }
+
+    @Override
+    @Transactional
+    public void changePassword(ChangePasswordRequest request) {
+        UserData user = userHelper.findUserByEmail(request.getEmail());
+        if (user.getRestoreCode() != null && user.getRestoreCode().equals(request.getRecoveryCode())) {
+            String encodedPassword = passwordEncoder.encode(request.getNewPassword());
+            user.setPassword(encodedPassword);
+            user.setRestoreCode(null);
+            userHelper.saveUser(user);
+            log.info("Password changed successfully");
+        } else throw new InvalidRecoveryCode("Invalid recovery code");
     }
 }

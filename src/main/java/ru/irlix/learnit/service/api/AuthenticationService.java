@@ -20,5 +20,4 @@ public interface AuthenticationService {
 
     UserFullResponse getCurrentUser();
 
-    JwtResponse getToken(String token);
 }

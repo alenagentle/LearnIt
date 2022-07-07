@@ -17,6 +17,14 @@ env:
     value: "http://192.168.88.42:30302"
   - name: S3_BUCKET
     value: "learnit-dev"
+  - name: MAIL_HOST
+    value: "smtp.mail.ru"
+  - name: MAIL_PORT
+    value: "587"
+  - name: SENDER_ADDRESS
+    value: "learnit_recovery@mail.ru"
+  - name: SENDER_PASSWORD
+    value: "i9CKFRr9m0EG38v8QHGo"
 
 ingress:
   enabled: true

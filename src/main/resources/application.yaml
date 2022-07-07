@@ -41,3 +41,10 @@ s3:
   bucket: ${S3_BUCKET}
 
 fontPath: "arial.ttf"
+
+mail:
+  host: ${MAIL_HOST}
+  port: ${MAIL_PORT}
+  senderAddress: ${SENDER_ADDRESS}
+  senderPassword: ${SENDER_PASSWORD}
+

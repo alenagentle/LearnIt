@@ -10,14 +10,18 @@ import org.springframework.data.domain.PageImpl;
 import ru.irlix.learnit.dto.request.TestRequest;
 import ru.irlix.learnit.dto.response.test.TestFullResponse;
 import ru.irlix.learnit.dto.response.test.TestResponse;
+import ru.irlix.learnit.entity.Answer;
+import ru.irlix.learnit.entity.Result;
 import ru.irlix.learnit.entity.Test;
 import ru.irlix.learnit.entity.Topic;
 import ru.irlix.learnit.entity.UserData;
+import ru.irlix.learnit.entity.Variant;
 import ru.irlix.learnit.service.helper.TopicHelper;
 import ru.irlix.learnit.service.helper.UserHelper;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring", uses = {QuestionMapper.class, ResultMapper.class, ImageMapper.class})
 public abstract class TestMapper {
@@ -60,16 +64,36 @@ public abstract class TestMapper {
         response.setResultCount(resultCount);
         Long authorId = test.getUser().getId();
         response.setAuthorId(authorId);
+        int rightAnsweredCount = getRightAnsweredCount(test);
         int answeredCount = test.getResults().stream().filter(result -> result.getUser()
                         .equals(userHelper.getCurrentUserData()))
                 .max(Comparator.comparingInt(r -> r.getAnswers().size()))
                 .map(result -> result.getAnswers().size()).orElse(0);
         response.setQuestionsAnsweredCount(answeredCount);
+        response.setQuestionsRightAnsweredCount(rightAnsweredCount);
         if (questionCount <= 0) {
             questionCount = 1;
         }
-        int progress = answeredCount / questionCount * 100;
+        long progress = Math.round((double) rightAnsweredCount / questionCount * 100);
         response.setProgress(progress);
+    }
+
+    private int getRightAnsweredCount(Test test) {
+        List<Result> currentUserResults = test.getResults().stream().filter(result -> result.getUser()
+                .equals(userHelper.getCurrentUserData())).collect(Collectors.toList());
+        int rightAnsweredCount = 0;
+        for (Result currentUserResult : currentUserResults) {
+            int count = 0;
+            for (Answer answer : currentUserResult.getAnswers()) {
+                for (Variant variant : answer.getVariants()) {
+                    if (variant.getIsRight())
+                        count++;
+                }
+            }
+            if (rightAnsweredCount < count)
+                rightAnsweredCount = count;
+        }
+        return rightAnsweredCount;
     }
 
     @AfterMapping

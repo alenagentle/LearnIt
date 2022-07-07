@@ -22,7 +22,6 @@ import ru.irlix.learnit.security.util.JwtUtils;
 import ru.irlix.learnit.service.api.AuthenticationService;
 import ru.irlix.learnit.service.helper.TokenHelper;
 import ru.irlix.learnit.service.helper.UserHelper;
-import ru.irlix.learnit.util.AESUtils;
 
 @Slf4j
 @Service
@@ -35,7 +34,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final TokenHelper tokenHelper;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
-    final String secretKey = "QRWDCHGSgwuy2bu728674q";
 
     @Override
     @Transactional
@@ -86,14 +84,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public UserFullResponse getCurrentUser() {
         UserData currentUserData = userHelper.getCurrentUserData();
         return userMapper.mapToFullResponse(currentUserData);
-    }
-
-    @Override
-    @Transactional
-    public JwtResponse getToken(String token) {
-        String email = AESUtils.decryptt(token, secretKey);
-        UserData userData = findUserOnAuthentication(email);
-        return tokenHelper.generateTokens(userData);
     }
 
     private void validateUsernameAndEmail(SignUpRequest request) {

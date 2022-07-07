@@ -3,9 +3,11 @@ package ru.irlix.learnit.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.irlix.learnit.security.util.JwtUtils;
+import org.springframework.transaction.annotation.Transactional;
+import ru.irlix.learnit.config.MailConfig;
+import ru.irlix.learnit.entity.UserData;
 import ru.irlix.learnit.service.api.MailService;
-import ru.irlix.learnit.util.AESUtils;
+import ru.irlix.learnit.service.helper.UserHelper;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -22,57 +24,39 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class MailServiceImpl implements MailService {
 
-    private final JwtUtils jwtUtils;
-    final String secretKey = "QRWDCHGSgwuy2bu728674q";
-    final String text = "Для восстановления доступа к Вашей учетной записи скопируйте код: \n %s";
+    private final UserHelper userHelper;
+    final String text = "Для восстановления доступа к Вашей учетной записи скопируйте код:\n%s";
+    private final MailConfig mailConfig;
 
     @Override
-    public void sendMessage(String mail) {
-        System.out.println("sendMessage()...");
-
-//        String link = "http://localhost:8080/api/restore/";
-
-//        String encodedString = Base64.getEncoder().withoutPadding().encodeToString(mail.getBytes());
-//        System.out.println("encodedString  " + encodedString);
-//        byte[] decodedBytes = Base64.getUrlDecoder().decode(encodedString);
-//        String decodedUrl = new String(decodedBytes);
-//        System.out.println("decodedUrl  " + decodedUrl);
-
+    @Transactional
+    public void sendMessage(String email) {
         Random rnd = new Random();
-        int number = rnd.nextInt(999999);
-        String digit = String.format("%06d", number);
-        System.out.println("digit = " + digit);
-
-//        String token = AESUtils.encryptt(mail, secretKey);
-//        System.out.println("encrypted token " + token);
-//        String decryptedMail = AESUtils.decryptt(token, secretKey);
-//        System.out.println("decryptedMail = " + decryptedMail);
-
-
+        int number = rnd.nextInt(9999);
+        String digit = String.format("%04d", number);
+        UserData userData = userHelper.findUserByEmail(email);
+        userData.setRestoreCode(digit);
+        userHelper.saveUser(userData);
         Properties props = new Properties();
-        props.setProperty("mail.smtp.host", "smtp.mail.ru");
+        props.setProperty("mail.smtp.host", mailConfig.getHost());
         props.setProperty("mail.smtp.auth", "true");
-        props.setProperty("mail.smtp.port", "587");
+        props.setProperty("mail.smtp.port", mailConfig.getPort());
         props.setProperty("mail.smtp.starttls.enable", "true");
         Session session = Session.getInstance(props, new javax.mail.Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
-//                return new PasswordAuthentication("learnit.restore@gmail.com", "admin12#");
-                return new PasswordAuthentication("kiseleva_elena92@mail.ru", "oXo5a8kHDygbAT94mrxM");
+                return new PasswordAuthentication(mailConfig.getSenderAddress(), mailConfig.getSenderPassword());
             }
         });
-
         try {
             MimeMessage msg = new MimeMessage(session);
-//            msg.setFrom(new InternetAddress("learnit.restore@gmail.com"));
-            msg.setFrom(new InternetAddress("kiseleva_elena92@mail.ru"));
-            msg.addRecipient(Message.RecipientType.TO, new InternetAddress(mail));
+            msg.setFrom(new InternetAddress(mailConfig.getSenderAddress()));
+            msg.addRecipient(Message.RecipientType.TO, new InternetAddress(email));
             msg.setSubject("restore password");
-            msg.setText(String.format(text,  digit));
+            msg.setText(String.format(text, digit));
             Transport.send(msg);
-            System.out.println("Email Sent successfully....");
+            log.info("Email sent successfully");
         } catch (MessagingException mex) {
             mex.printStackTrace();
         }
-//        }
     }
 }

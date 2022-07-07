@@ -27,5 +27,7 @@ public class TestResponse {
 
     private int questionsAnsweredCount;
 
-    private int progress;
+    private int questionsRightAnsweredCount;
+
+    private long progress;
 }

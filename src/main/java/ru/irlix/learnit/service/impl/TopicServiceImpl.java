@@ -11,9 +11,11 @@ import ru.irlix.learnit.dto.response.topic.TopicFullResponse;
 import ru.irlix.learnit.dto.response.topic.TopicResponse;
 import ru.irlix.learnit.entity.Direction;
 import ru.irlix.learnit.entity.Image;
+import ru.irlix.learnit.entity.Link;
 import ru.irlix.learnit.entity.Result;
 import ru.irlix.learnit.entity.Topic;
 import ru.irlix.learnit.entity.UserData;
+import ru.irlix.learnit.entity.Wiki;
 import ru.irlix.learnit.exception.FieldAlreadyTakenException;
 import ru.irlix.learnit.exception.NoRelatedDirectionException;
 import ru.irlix.learnit.mapper.TopicMapper;
@@ -25,6 +27,7 @@ import ru.irlix.learnit.service.helper.ResultHelper;
 import ru.irlix.learnit.service.helper.TopicHelper;
 import ru.irlix.learnit.service.helper.UserHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -123,6 +126,18 @@ public class TopicServiceImpl implements TopicService {
         if (request.getWikiText() != null) {
             topicToUpdate.getWiki().setText(request.getWikiText());
         }
+        if (request.getLinks() != null) {
+            List<Link> links = new ArrayList<>();
+            request.getLinks().forEach(text -> setLinkList(topicToUpdate.getWiki(), links, text));
+            topicToUpdate.getWiki().setLinks(links);
+        }
+    }
+
+    private void setLinkList(Wiki wiki, List<Link> links, String text) {
+        Link link = new Link();
+        link.setText(text);
+        link.setWiki(wiki);
+        links.add(link);
     }
 
     private void deleteImageFromS3(Topic topic) {

@@ -35,6 +35,11 @@ public class UserHelper {
                 .orElseThrow(() -> new NotFoundException(String.format("User with username '%s' not found", username)));
     }
 
+    public UserData findUserByEmail(String email) {
+        return userRepository.findUserDataByEmail(email)
+                .orElseThrow(() -> new NotFoundException(String.format("User with email '%s' not found", email)));
+    }
+
     public UserData getCurrentUserData() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String anonymousUser = "anonymousUser";

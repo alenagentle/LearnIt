@@ -14,6 +14,7 @@ import ru.irlix.learnit.exception.ExceptionResponse;
 import ru.irlix.learnit.exception.FieldAlreadyTakenException;
 import ru.irlix.learnit.exception.FileException;
 import ru.irlix.learnit.exception.IncorrectCredentialsException;
+import ru.irlix.learnit.exception.InvalidRecoveryCode;
 import ru.irlix.learnit.exception.NoRelatedDirectionException;
 import ru.irlix.learnit.exception.NoRightVariantInQuestionException;
 import ru.irlix.learnit.exception.NotFoundException;
@@ -106,7 +107,15 @@ public class RestExceptionHandler {
     }
 
     @ExceptionHandler(MessagingException.class)
-    protected ResponseEntity<ExceptionResponse> handleIllegalArgumentException(MessagingException ex) {
+    protected ResponseEntity<ExceptionResponse> handleIMessagingException(MessagingException ex) {
+        String message = ex.getMessage();
+        ExceptionResponse response = new ExceptionResponse(message);
+        log.error(message);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidRecoveryCode.class)
+    protected ResponseEntity<ExceptionResponse> handleInvalidRecoveryCode(InvalidRecoveryCode ex) {
         String message = ex.getMessage();
         ExceptionResponse response = new ExceptionResponse(message);
         log.error(message);
